@@ -130,8 +130,7 @@ ISSN 0304-4068, <https://doi.org/10.1016/0304-4068(74)90033-0>.
     rownames(sheet21) <- 1:72
     rownames(sheet49) <- 1:72
 
-### Create compatibility ranking matrix based on compatbility scores
-between each mentee and each potential mentor
+### Create compatibility ranking matrix based on compatbility scores between each mentee and each potential mentor
 
     rank_table <- data.frame(matrix(NA, nrow = nrow(sheet21), ncol = nrow(sheet49)),row.names = rownames(sheet21))
 
@@ -155,8 +154,7 @@ between each mentee and each potential mentor
 
     ## [1] TRUE
 
-### Plot histogram of the ranking of each matched mentor with respect
-to its mentee.
+### Plot histogram of the ranking of each matched mentor with respect to its mentee.
 
     matched_ranks <- numeric()
 
