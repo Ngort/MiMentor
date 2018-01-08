@@ -28,6 +28,8 @@ most optimal pairing (Shapley & Scarf, 1974).
 
     ## Loading required package: Rcpp
 
+    library(knitr)
+
 ### Function bank
 
     matchcat <- function(a,b){ #score the compatibility between two individuals based on multiple choice questions such as majors, industries, regions, etc.
@@ -146,45 +148,100 @@ most optimal pairing (Shapley & Scarf, 1974).
 
 ### Output summary of matches with information about mentees provided to each assigned mentor
 
-    matched_info <- matched[colnames(matched)!='rank']
-    matched_info <- cbind(matched_info[c(3,4,1,2)],sheet21[c(5,7:11)])
-
-    names(matched_info) <- c('mentor','mentor_email','mentee','mentee_email','mentee_gender','mentee_majors','mentee_industries','mentee_region','mentee_country','mentee_country2')
-    write.csv(matched_info,'mimentor_matches_test.csv')
-    head(matched_info)
-
-    ##    mentor            mentor_email     mentee               mentee_email
-    ## 1 Shannon shannon@minerva.kgi.edu     Leslie     leslie@minerva.kgi.edu
-    ## 2   Diane   diane@minerva.kgi.edu      Peggy      peggy@minerva.kgi.edu
-    ## 3  Rachel  rachel@minerva.kgi.edu    Rebecca    rebecca@minerva.kgi.edu
-    ## 4  Stacey  stacey@minerva.kgi.edu Antoinette antoinette@minerva.kgi.edu
-    ## 5   Pedro   pedro@minerva.kgi.edu    Melanie    melanie@minerva.kgi.edu
-    ## 6  Carlos  carlos@minerva.kgi.edu    Adriana    adriana@minerva.kgi.edu
-    ##                   mentee_gender
-    ## 1                        Female
-    ## 2                        Female
-    ## 3                        Female
-    ## 4 Why do you need to know that?
-    ## 5                        Female
-    ## 6                        Female
-    ##                                    mentee_majors
-    ## 1               Business, Computational Sciences
-    ## 2                               Natural Sciences
-    ## 3                                Social Sciences
-    ## 4           Arts and Humanities, Social Sciences
-    ## 5 Arts and Humanities, Business, Social Sciences
-    ## 6              Social Sciences, Natural Sciences
-    ##                                                                                                                                               mentee_industries
-    ## 1                                                                     Business & Consulting & Management, Marketing & Adverting & PR, STEM Research, Technology
-    ## 2                                                                                                                                        Medical, STEM Research
-    ## 3 Business & Consulting & Management, Government & Public Policy, Marketing & Adverting & PR, People Development, Social Enterprise & International Development
-    ## 4                                                                                           Design and Visual Arts, Journalism & Media, Social Science Research
-    ## 5                                                                                    Performing Arts & Music, Startups & Enterpreneurship, Teaching & Education
-    ## 6                                 Environment & Agriculture, Government & Public Policy, Social Enterprise & International Development, Social Science Research
-    ##     mentee_region mentee_country mentee_country2
-    ## 1     Middle East          Egypt                
-    ## 2  Eastern Europe        Romania                
-    ## 3 South East Asia        Vietnam         Vietnam
-    ## 4  Eastern Europe      Lithuania                
-    ## 5       East Asia          China                
-    ## 6       East Asia          China           Italy
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="left">mentor</th>
+<th align="left">mentor_email</th>
+<th align="left">mentee</th>
+<th align="left">mentee_email</th>
+<th align="left">mentee_gender</th>
+<th align="left">mentee_majors</th>
+<th align="left">mentee_industries</th>
+<th align="left">mentee_region</th>
+<th align="left">mentee_country</th>
+<th align="left">mentee_country2</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>67</td>
+<td align="left">Erica</td>
+<td align="left"><a href="mailto:erica@minerva.kgi.edu">erica@minerva.kgi.edu</a></td>
+<td align="left">Anthony</td>
+<td align="left"><a href="mailto:anthony@minerva.kgi.edu">anthony@minerva.kgi.edu</a></td>
+<td align="left">Male</td>
+<td align="left">Business, Social Sciences, Computational Sciences</td>
+<td align="left">Accounting &amp; Banking &amp; Finance, Business &amp; Consulting &amp; Management, Government &amp; Public Policy, Law, Social Science Research</td>
+<td align="left">East Asia</td>
+<td align="left">China</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td>68</td>
+<td align="left">Sally</td>
+<td align="left"><a href="mailto:sally@minerva.kgi.edu">sally@minerva.kgi.edu</a></td>
+<td align="left">Oliver</td>
+<td align="left"><a href="mailto:oliver@minerva.kgi.edu">oliver@minerva.kgi.edu</a></td>
+<td align="left">Male</td>
+<td align="left">Computational Sciences</td>
+<td align="left">Business &amp; Consulting &amp; Management, Technology</td>
+<td align="left">South East Asia</td>
+<td align="left">Vietnam</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td>69</td>
+<td align="left">Tammy</td>
+<td align="left"><a href="mailto:tammy@minerva.kgi.edu">tammy@minerva.kgi.edu</a></td>
+<td align="left">Jeffrey</td>
+<td align="left"><a href="mailto:jeffrey@minerva.kgi.edu">jeffrey@minerva.kgi.edu</a></td>
+<td align="left">Male</td>
+<td align="left">Natural Sciences</td>
+<td align="left">Environment &amp; Agriculture, Startups &amp; Enterpreneurship, STEM Research</td>
+<td align="left">Eastern Europe</td>
+<td align="left">Kosovo</td>
+<td align="left">Kosovo</td>
+</tr>
+<tr class="even">
+<td>70</td>
+<td align="left">Amber</td>
+<td align="left"><a href="mailto:amber@minerva.kgi.edu">amber@minerva.kgi.edu</a></td>
+<td align="left">Jack</td>
+<td align="left"><a href="mailto:jack@minerva.kgi.edu">jack@minerva.kgi.edu</a></td>
+<td align="left">Male</td>
+<td align="left">Arts and Humanities, Computational Sciences</td>
+<td align="left">Engeneering &amp; Manufacturing, STEM Research</td>
+<td align="left">East Asia</td>
+<td align="left">Korea, Republic of (South Korea)</td>
+<td align="left">United States of America (USA)</td>
+</tr>
+<tr class="odd">
+<td>71</td>
+<td align="left">Allison</td>
+<td align="left"><a href="mailto:allison@minerva.kgi.edu">allison@minerva.kgi.edu</a></td>
+<td align="left">Joe</td>
+<td align="left"><a href="mailto:joe@minerva.kgi.edu">joe@minerva.kgi.edu</a></td>
+<td align="left">Male</td>
+<td align="left">Business, Computational Sciences</td>
+<td align="left">Accounting &amp; Banking &amp; Finance, Business &amp; Consulting &amp; Management, Startups &amp; Enterpreneurship, Technology</td>
+<td align="left">Latin America</td>
+<td align="left">Brazil</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td>72</td>
+<td align="left">Harold</td>
+<td align="left"><a href="mailto:harold@minerva.kgi.edu">harold@minerva.kgi.edu</a></td>
+<td align="left">Eugene</td>
+<td align="left"><a href="mailto:eugene@minerva.kgi.edu">eugene@minerva.kgi.edu</a></td>
+<td align="left">Male</td>
+<td align="left">Social Sciences, Computational Sciences</td>
+<td align="left">Engeneering &amp; Manufacturing, Government &amp; Public Policy, Social Enterprise &amp; International Development, Technology</td>
+<td align="left">South East Asia</td>
+<td align="left">Pakistan</td>
+<td align="left"></td>
+</tr>
+</tbody>
+</table>
