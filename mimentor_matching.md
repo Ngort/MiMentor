@@ -1,4 +1,4 @@
-\#\#MiMentor Matching Algorithm
+##MiMentor Matching Algorithm
 
 This algorithm assigns a compatibility score between each mentee and
 mentor, sets a ranking of compatibility for each potential mentor and
@@ -8,7 +8,7 @@ most optimal pairing \[1\].
 Compatibility score is calculated using the following formula:
 ![Compatibility score calculation. For each preference order p\_i,
 calculate the marginal compatibility score (s\_i) for the category
-selected.](http://www.sciweavers.org/upload/Tex2Img_1515419331/eqn.png)
+selected.](mimentor_matching_files/figure-markdown_strict/eqn.png)
 
 The formula above leads to the following weights:
 ![](mimentor_matching_files/figure-markdown_strict/unnamed-chunk-1-1.png)
@@ -18,7 +18,8 @@ additional weight in the formula (1.75^5 = 16.41) corresponding to the
 compatibility between the mentee’s class preference and the mentor’s
 class.
 
-\#\#\#References: \[1\] Jan Tilly and Nick Janetos (2015). matchingR:
+###References: 
+\[1\] Jan Tilly and Nick Janetos (2015). matchingR:
 Matching Algorithms in R and C++. R package version 1.2.1.
 <https://CRAN.R-project.org/package=matchingR>
 
@@ -26,7 +27,7 @@ Matching Algorithms in R and C++. R package version 1.2.1.
 Journal of Mathematical Economics, Volume 1, Issue 1, 1974, Pages 23-37,
 ISSN 0304-4068, <https://doi.org/10.1016/0304-4068(74)90033-0>.
 
-\#\#\#Libraries
+###Libraries
 
     library(tidyverse,warn.conflicts = FALSE)
 
@@ -50,7 +51,7 @@ ISSN 0304-4068, <https://doi.org/10.1016/0304-4068(74)90033-0>.
     library(kableExtra)
     library(cowplot,warn.conflicts = FALSE)
 
-\#\#\#Function bank
+###Function bank
 
     matchcat <- function(a,b){ #score the compatibility between two individuals based on multiple choice questions such as majors, industries, regions, etc.
         catsa <- (a %>% strsplit(split=', '))[[1]] #split categories described in form by commas
@@ -120,7 +121,7 @@ ISSN 0304-4068, <https://doi.org/10.1016/0304-4068(74)90033-0>.
 
     vec_score <- Vectorize(match_score)
 
-\#\#\#Read and process mock data
+###Read and process mock data
 
     sheet1 <- read.csv('test_data.csv',stringsAsFactors = FALSE)
     sheet21 <- sheet1[sheet1$class == 2021,]
@@ -128,7 +129,7 @@ ISSN 0304-4068, <https://doi.org/10.1016/0304-4068(74)90033-0>.
     rownames(sheet21) <- 1:72
     rownames(sheet49) <- 1:72
 
-\#\#\#Create compatibility ranking matrix based on compatbility scores
+###Create compatibility ranking matrix based on compatbility scores
 between each mentee and each potential mentor
 
     rank_table <- data.frame(matrix(NA, nrow = nrow(sheet21), ncol = nrow(sheet49)),row.names = rownames(sheet21))
@@ -139,7 +140,7 @@ between each mentee and each potential mentor
 
     rank_matrix <- rank_table %>% unname %>% as.matrix() %>% apply(1,as.numeric)
 
-\#\#\#Apply Top Trading Cycle Algorithm, check for stable solution
+###Apply Top Trading Cycle Algorithm, check for stable solution
 
     results <- toptrading(pref = rank_matrix)
     matched <- as.data.frame(toptrading(pref = rank_matrix))
@@ -153,7 +154,7 @@ between each mentee and each potential mentor
 
     ## [1] TRUE
 
-\#\#\#Plot histogram of the ranking of each matched mentor with respect
+###Plot histogram of the ranking of each matched mentor with respect
 to its mentee.
 
     matched_ranks <- numeric()
@@ -168,7 +169,7 @@ to its mentee.
 
 ![](mimentor_matching_files/figure-markdown_strict/unnamed-chunk-7-1.png)
 
-\#\#\#Output summary of matches with information about mentees provided
+###Output summary of matches with information about mentees provided
 to each assigned mentor
 
     ## Currently generic markdown table using pandoc is not supported.
