@@ -1,27 +1,55 @@
 ---
 title: "mimentor_matching"
-output: html_document
+output: md_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# MiMentor Matching Algorithm
+##MiMentor Matching Algorithm
 
-###This algorithm assigns a compatibility score between each mentee and mentor, sets a ranking
-###of compatibility for each potential mentor and implements the Top Trading Cycle algorithm
-###through matchingR to find the most optimal pairing (Shapley & Scarf, 1974).
+This algorithm assigns a compatibility score between each mentee and mentor, sets a ranking
+of compatibility for each potential mentor and implements the Top Trading Cycle algorithm
+through matchingR to find the most optimal pairing [1].
 
-###http://www.sciencedirect.com/science/article/pii/0304406874900330?via%3Dihub
+Compatibility score is calculated using the following formula:
+![Compatibility score calculation. For each preference order p_i, calculate the marginal compatibility score (s_i) for the category selected.](http://www.sciweavers.org/upload/Tex2Img_1515419331/eqn.png)
 
-##Libraries
-```{r}
-library(tidyverse)
-library(matchingR)
+The formula above leads to the following weights:
+```{r echo=FALSE}
+library(ggplot2)
+library(cowplot,warn.conflicts = FALSE)
+`Preference order` <- 1:5
+`Weight in compatibility score` <- round(1.75**(5-`Preference order`),2)
+score_df <- data.frame(`Preference order`,`Weight in compatibility score`)
+
+
+ggplot(data=score_df,aes(x=`Preference order`,y=`Weight in compatibility score`)) +
+    geom_point() +
+    geom_line() +
+    geom_text(aes(label=`Weight in compatibility score`), nudge_y = 0.4, nudge_x = +0.045)
+
 ```
 
-##Function bank
+When there is a specified class preference for the mentor, there is an additional weight in the formula (1.75^5 = 16.41)
+corresponding to the compatibility between the mentee's class preference and the mentor's class.
+
+###References:
+[1] Jan Tilly and Nick Janetos (2015). matchingR: Matching Algorithms in R and C++. R package version 1.2.1. https://CRAN.R-project.org/package=matchingR
+
+[2] Lloyd Shapley, Herbert Scarf, On cores and indivisibility, In Journal of Mathematical Economics, Volume 1, Issue 1, 1974, Pages 23-37, ISSN 0304-4068, https://doi.org/10.1016/0304-4068(74)90033-0.
+
+###Libraries
+```{r}
+library(tidyverse,warn.conflicts = FALSE)
+library(matchingR)
+library(knitr)
+library(kableExtra)
+library(cowplot,warn.conflicts = FALSE)
+```
+
+###Function bank
 ```{r}
 matchcat <- function(a,b){ #score the compatibility between two individuals based on multiple choice questions such as majors, industries, regions, etc.
     catsa <- (a %>% strsplit(split=', '))[[1]] #split categories described in form by commas
@@ -92,7 +120,7 @@ match_score <- function(a,b){ #mentee a with respect to mentor b
 vec_score <- Vectorize(match_score)
 ```
 
-##Read and process mock data
+###Read and process mock data
 ```{r}
 sheet1 <- read.csv('test_data.csv',stringsAsFactors = FALSE)
 sheet21 <- sheet1[sheet1$class == 2021,]
@@ -101,7 +129,7 @@ rownames(sheet21) <- 1:72
 rownames(sheet49) <- 1:72
 ```
 
-##Create compatibility ranking matrix based on compatbility scores between each mentee and each potential mentor
+###Create compatibility ranking matrix based on compatbility scores between each mentee and each potential mentor
 ```{r}
 rank_table <- data.frame(matrix(NA, nrow = nrow(sheet21), ncol = nrow(sheet49)),row.names = rownames(sheet21))
 
@@ -112,7 +140,7 @@ for(i in rownames(sheet21)){
 rank_matrix <- rank_table %>% unname %>% as.matrix() %>% apply(1,as.numeric)
 ```
 
-##Apply Top Trading Cycle Algorithm, check for stable solution
+###Apply Top Trading Cycle Algorithm, check for stable solution
 ```{r}
 results <- toptrading(pref = rank_matrix)
 matched <- as.data.frame(toptrading(pref = rank_matrix))
@@ -125,7 +153,7 @@ matched <- matched[colnames(matched)!='V1']
 toptrading.checkStability(pref = rank_matrix,matchings =results)
 ```
 
-##Plot histogram of the ranking of each matched mentor with respect to its mentee. 
+###Plot histogram of the ranking of each matched mentor with respect to its mentee. 
 ```{r}
 matched_ranks <- numeric()
 
@@ -139,12 +167,14 @@ hist(matched_ranks,breaks=62,col='orange') #average rank of the mentor assigned 
 
 ```
 
-##Output summary of matches with information about mentees provided to each assigned mentor
-```{r}
+###Output summary of matches with information about mentees provided to each assigned mentor
+```{r echo=FALSE, results='asis'}
 matched_info <- matched[colnames(matched)!='rank']
-matched_info <- cbind(matched_info[c(3,4,1,2)],sheet21[c(4,7:11)])
+matched_info <- cbind(matched_info[c(3,4,1,2)],sheet21[c(5,7:11)])
 
 names(matched_info) <- c('mentor','mentor_email','mentee','mentee_email','mentee_gender','mentee_majors','mentee_industries','mentee_region','mentee_country','mentee_country2')
 write.csv(matched_info,'mimentor_matches_test.csv')
-matched_info
+knitr::kable(tail(matched_info)) %>% kable_styling(font_size = 4)
+
+
 ```
