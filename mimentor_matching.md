@@ -29,6 +29,7 @@ most optimal pairing (Shapley & Scarf, 1974).
     ## Loading required package: Rcpp
 
     library(knitr)
+    library(kableExtra)
 
 ### Function bank
 
@@ -147,6 +148,9 @@ most optimal pairing (Shapley & Scarf, 1974).
 ![](mimentor_matching_files/figure-markdown_strict/unnamed-chunk-6-1.png)
 
 ### Output summary of matches with information about mentees provided to each assigned mentor
+
+    ## Currently generic markdown table using pandoc is not supported.
+    ## Currently generic markdown table using pandoc is not supported.
 
 <table>
 <thead>
