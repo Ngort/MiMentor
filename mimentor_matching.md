@@ -1,18 +1,35 @@
-MiMentor Matching Algorithm
----------------------------
+\#\#MiMentor Matching Algorithm
 
 This algorithm assigns a compatibility score between each mentee and
 mentor, sets a ranking of compatibility for each potential mentor and
 implements the Top Trading Cycle algorithm through matchingR to find the
-most optimal pairing (Shapley & Scarf, 1974).
+most optimal pairing \[1\].
 
-<http://www.sciencedirect.com/science/article/pii/0304406874900330?via%3Dihub>
+Compatibility score is calculated using the following formula:
+![Compatibility score calculation. For each preference order p\_i,
+calculate the marginal compatibility score (s\_i) for the category
+selected.](http://www.sciweavers.org/upload/Tex2Img_1515419331/eqn.png)
 
-### Libraries
+The formula above leads to the following weights:
+![](mimentor_matching_files/figure-markdown_strict/unnamed-chunk-1-1.png)
 
-    library(tidyverse)
+When there is a specified class preference for the mentor, there is an
+additional weight in the formula (1.75^5 = 16.41) corresponding to the
+compatibility between the mentee’s class preference and the mentor’s
+class.
 
-    ## Loading tidyverse: ggplot2
+\#\#\#References: \[1\] Jan Tilly and Nick Janetos (2015). matchingR:
+Matching Algorithms in R and C++. R package version 1.2.1.
+<https://CRAN.R-project.org/package=matchingR>
+
+\[2\] Lloyd Shapley, Herbert Scarf, On cores and indivisibility, In
+Journal of Mathematical Economics, Volume 1, Issue 1, 1974, Pages 23-37,
+ISSN 0304-4068, <https://doi.org/10.1016/0304-4068(74)90033-0>.
+
+\#\#\#Libraries
+
+    library(tidyverse,warn.conflicts = FALSE)
+
     ## Loading tidyverse: tibble
     ## Loading tidyverse: tidyr
     ## Loading tidyverse: readr
@@ -22,6 +39,7 @@ most optimal pairing (Shapley & Scarf, 1974).
     ## Conflicts with tidy packages ----------------------------------------------
 
     ## filter(): dplyr, stats
+    ## ggsave(): ggplot2, cowplot
     ## lag():    dplyr, stats
 
     library(matchingR)
@@ -30,8 +48,9 @@ most optimal pairing (Shapley & Scarf, 1974).
 
     library(knitr)
     library(kableExtra)
+    library(cowplot,warn.conflicts = FALSE)
 
-### Function bank
+\#\#\#Function bank
 
     matchcat <- function(a,b){ #score the compatibility between two individuals based on multiple choice questions such as majors, industries, regions, etc.
         catsa <- (a %>% strsplit(split=', '))[[1]] #split categories described in form by commas
@@ -101,7 +120,7 @@ most optimal pairing (Shapley & Scarf, 1974).
 
     vec_score <- Vectorize(match_score)
 
-### Read and process mock data
+\#\#\#Read and process mock data
 
     sheet1 <- read.csv('test_data.csv',stringsAsFactors = FALSE)
     sheet21 <- sheet1[sheet1$class == 2021,]
@@ -109,7 +128,8 @@ most optimal pairing (Shapley & Scarf, 1974).
     rownames(sheet21) <- 1:72
     rownames(sheet49) <- 1:72
 
-### Create compatibility ranking matrix based on compatbility scores between each mentee and each potential mentor
+\#\#\#Create compatibility ranking matrix based on compatbility scores
+between each mentee and each potential mentor
 
     rank_table <- data.frame(matrix(NA, nrow = nrow(sheet21), ncol = nrow(sheet49)),row.names = rownames(sheet21))
 
@@ -119,7 +139,7 @@ most optimal pairing (Shapley & Scarf, 1974).
 
     rank_matrix <- rank_table %>% unname %>% as.matrix() %>% apply(1,as.numeric)
 
-### Apply Top Trading Cycle Algorithm, check for stable solution
+\#\#\#Apply Top Trading Cycle Algorithm, check for stable solution
 
     results <- toptrading(pref = rank_matrix)
     matched <- as.data.frame(toptrading(pref = rank_matrix))
@@ -133,7 +153,8 @@ most optimal pairing (Shapley & Scarf, 1974).
 
     ## [1] TRUE
 
-### Plot histogram of the ranking of each matched mentor with respect to its mentee.
+\#\#\#Plot histogram of the ranking of each matched mentor with respect
+to its mentee.
 
     matched_ranks <- numeric()
 
@@ -145,9 +166,10 @@ most optimal pairing (Shapley & Scarf, 1974).
 
     hist(matched_ranks,breaks=62,col='orange') #average rank of the mentor assigned for each mentee as a measure of success of matching
 
-![](mimentor_matching_files/figure-markdown_strict/unnamed-chunk-6-1.png)
+![](mimentor_matching_files/figure-markdown_strict/unnamed-chunk-7-1.png)
 
-### Output summary of matches with information about mentees provided to each assigned mentor
+\#\#\#Output summary of matches with information about mentees provided
+to each assigned mentor
 
     ## Currently generic markdown table using pandoc is not supported.
 
@@ -155,96 +177,96 @@ most optimal pairing (Shapley & Scarf, 1974).
 <thead>
 <tr class="header">
 <th></th>
-<th align="left">mentor</th>
-<th align="left">mentor_email</th>
-<th align="left">mentee</th>
-<th align="left">mentee_email</th>
-<th align="left">mentee_gender</th>
-<th align="left">mentee_majors</th>
-<th align="left">mentee_industries</th>
-<th align="left">mentee_region</th>
-<th align="left">mentee_country</th>
-<th align="left">mentee_country2</th>
+<th style="text-align: left;">mentor</th>
+<th style="text-align: left;">mentor_email</th>
+<th style="text-align: left;">mentee</th>
+<th style="text-align: left;">mentee_email</th>
+<th style="text-align: left;">mentee_gender</th>
+<th style="text-align: left;">mentee_majors</th>
+<th style="text-align: left;">mentee_industries</th>
+<th style="text-align: left;">mentee_region</th>
+<th style="text-align: left;">mentee_country</th>
+<th style="text-align: left;">mentee_country2</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td>67</td>
-<td align="left">Erica</td>
-<td align="left"><a href="mailto:erica@minerva.kgi.edu">erica@minerva.kgi.edu</a></td>
-<td align="left">Anthony</td>
-<td align="left"><a href="mailto:anthony@minerva.kgi.edu">anthony@minerva.kgi.edu</a></td>
-<td align="left">Male</td>
-<td align="left">Business, Social Sciences, Computational Sciences</td>
-<td align="left">Accounting &amp; Banking &amp; Finance, Business &amp; Consulting &amp; Management, Government &amp; Public Policy, Law, Social Science Research</td>
-<td align="left">East Asia</td>
-<td align="left">China</td>
-<td align="left"></td>
+<td style="text-align: left;">Erica</td>
+<td style="text-align: left;"><a href="mailto:erica@minerva.kgi.edu">erica@minerva.kgi.edu</a></td>
+<td style="text-align: left;">Anthony</td>
+<td style="text-align: left;"><a href="mailto:anthony@minerva.kgi.edu">anthony@minerva.kgi.edu</a></td>
+<td style="text-align: left;">Male</td>
+<td style="text-align: left;">Business, Social Sciences, Computational Sciences</td>
+<td style="text-align: left;">Accounting &amp; Banking &amp; Finance, Business &amp; Consulting &amp; Management, Government &amp; Public Policy, Law, Social Science Research</td>
+<td style="text-align: left;">East Asia</td>
+<td style="text-align: left;">China</td>
+<td style="text-align: left;"></td>
 </tr>
 <tr class="even">
 <td>68</td>
-<td align="left">Sally</td>
-<td align="left"><a href="mailto:sally@minerva.kgi.edu">sally@minerva.kgi.edu</a></td>
-<td align="left">Oliver</td>
-<td align="left"><a href="mailto:oliver@minerva.kgi.edu">oliver@minerva.kgi.edu</a></td>
-<td align="left">Male</td>
-<td align="left">Computational Sciences</td>
-<td align="left">Business &amp; Consulting &amp; Management, Technology</td>
-<td align="left">South East Asia</td>
-<td align="left">Vietnam</td>
-<td align="left"></td>
+<td style="text-align: left;">Sally</td>
+<td style="text-align: left;"><a href="mailto:sally@minerva.kgi.edu">sally@minerva.kgi.edu</a></td>
+<td style="text-align: left;">Oliver</td>
+<td style="text-align: left;"><a href="mailto:oliver@minerva.kgi.edu">oliver@minerva.kgi.edu</a></td>
+<td style="text-align: left;">Male</td>
+<td style="text-align: left;">Computational Sciences</td>
+<td style="text-align: left;">Business &amp; Consulting &amp; Management, Technology</td>
+<td style="text-align: left;">South East Asia</td>
+<td style="text-align: left;">Vietnam</td>
+<td style="text-align: left;"></td>
 </tr>
 <tr class="odd">
 <td>69</td>
-<td align="left">Tammy</td>
-<td align="left"><a href="mailto:tammy@minerva.kgi.edu">tammy@minerva.kgi.edu</a></td>
-<td align="left">Jeffrey</td>
-<td align="left"><a href="mailto:jeffrey@minerva.kgi.edu">jeffrey@minerva.kgi.edu</a></td>
-<td align="left">Male</td>
-<td align="left">Natural Sciences</td>
-<td align="left">Environment &amp; Agriculture, Startups &amp; Enterpreneurship, STEM Research</td>
-<td align="left">Eastern Europe</td>
-<td align="left">Kosovo</td>
-<td align="left">Kosovo</td>
+<td style="text-align: left;">Tammy</td>
+<td style="text-align: left;"><a href="mailto:tammy@minerva.kgi.edu">tammy@minerva.kgi.edu</a></td>
+<td style="text-align: left;">Jeffrey</td>
+<td style="text-align: left;"><a href="mailto:jeffrey@minerva.kgi.edu">jeffrey@minerva.kgi.edu</a></td>
+<td style="text-align: left;">Male</td>
+<td style="text-align: left;">Natural Sciences</td>
+<td style="text-align: left;">Environment &amp; Agriculture, Startups &amp; Enterpreneurship, STEM Research</td>
+<td style="text-align: left;">Eastern Europe</td>
+<td style="text-align: left;">Kosovo</td>
+<td style="text-align: left;">Kosovo</td>
 </tr>
 <tr class="even">
 <td>70</td>
-<td align="left">Amber</td>
-<td align="left"><a href="mailto:amber@minerva.kgi.edu">amber@minerva.kgi.edu</a></td>
-<td align="left">Jack</td>
-<td align="left"><a href="mailto:jack@minerva.kgi.edu">jack@minerva.kgi.edu</a></td>
-<td align="left">Male</td>
-<td align="left">Arts and Humanities, Computational Sciences</td>
-<td align="left">Engeneering &amp; Manufacturing, STEM Research</td>
-<td align="left">East Asia</td>
-<td align="left">Korea, Republic of (South Korea)</td>
-<td align="left">United States of America (USA)</td>
+<td style="text-align: left;">Amber</td>
+<td style="text-align: left;"><a href="mailto:amber@minerva.kgi.edu">amber@minerva.kgi.edu</a></td>
+<td style="text-align: left;">Jack</td>
+<td style="text-align: left;"><a href="mailto:jack@minerva.kgi.edu">jack@minerva.kgi.edu</a></td>
+<td style="text-align: left;">Male</td>
+<td style="text-align: left;">Arts and Humanities, Computational Sciences</td>
+<td style="text-align: left;">Engeneering &amp; Manufacturing, STEM Research</td>
+<td style="text-align: left;">East Asia</td>
+<td style="text-align: left;">Korea, Republic of (South Korea)</td>
+<td style="text-align: left;">United States of America (USA)</td>
 </tr>
 <tr class="odd">
 <td>71</td>
-<td align="left">Allison</td>
-<td align="left"><a href="mailto:allison@minerva.kgi.edu">allison@minerva.kgi.edu</a></td>
-<td align="left">Joe</td>
-<td align="left"><a href="mailto:joe@minerva.kgi.edu">joe@minerva.kgi.edu</a></td>
-<td align="left">Male</td>
-<td align="left">Business, Computational Sciences</td>
-<td align="left">Accounting &amp; Banking &amp; Finance, Business &amp; Consulting &amp; Management, Startups &amp; Enterpreneurship, Technology</td>
-<td align="left">Latin America</td>
-<td align="left">Brazil</td>
-<td align="left"></td>
+<td style="text-align: left;">Allison</td>
+<td style="text-align: left;"><a href="mailto:allison@minerva.kgi.edu">allison@minerva.kgi.edu</a></td>
+<td style="text-align: left;">Joe</td>
+<td style="text-align: left;"><a href="mailto:joe@minerva.kgi.edu">joe@minerva.kgi.edu</a></td>
+<td style="text-align: left;">Male</td>
+<td style="text-align: left;">Business, Computational Sciences</td>
+<td style="text-align: left;">Accounting &amp; Banking &amp; Finance, Business &amp; Consulting &amp; Management, Startups &amp; Enterpreneurship, Technology</td>
+<td style="text-align: left;">Latin America</td>
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: left;"></td>
 </tr>
 <tr class="even">
 <td>72</td>
-<td align="left">Harold</td>
-<td align="left"><a href="mailto:harold@minerva.kgi.edu">harold@minerva.kgi.edu</a></td>
-<td align="left">Eugene</td>
-<td align="left"><a href="mailto:eugene@minerva.kgi.edu">eugene@minerva.kgi.edu</a></td>
-<td align="left">Male</td>
-<td align="left">Social Sciences, Computational Sciences</td>
-<td align="left">Engeneering &amp; Manufacturing, Government &amp; Public Policy, Social Enterprise &amp; International Development, Technology</td>
-<td align="left">South East Asia</td>
-<td align="left">Pakistan</td>
-<td align="left"></td>
+<td style="text-align: left;">Harold</td>
+<td style="text-align: left;"><a href="mailto:harold@minerva.kgi.edu">harold@minerva.kgi.edu</a></td>
+<td style="text-align: left;">Eugene</td>
+<td style="text-align: left;"><a href="mailto:eugene@minerva.kgi.edu">eugene@minerva.kgi.edu</a></td>
+<td style="text-align: left;">Male</td>
+<td style="text-align: left;">Social Sciences, Computational Sciences</td>
+<td style="text-align: left;">Engeneering &amp; Manufacturing, Government &amp; Public Policy, Social Enterprise &amp; International Development, Technology</td>
+<td style="text-align: left;">South East Asia</td>
+<td style="text-align: left;">Pakistan</td>
+<td style="text-align: left;"></td>
 </tr>
 </tbody>
 </table>
