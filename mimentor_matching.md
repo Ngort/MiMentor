@@ -150,7 +150,6 @@ most optimal pairing (Shapley & Scarf, 1974).
 ### Output summary of matches with information about mentees provided to each assigned mentor
 
     ## Currently generic markdown table using pandoc is not supported.
-    ## Currently generic markdown table using pandoc is not supported.
 
 <table>
 <thead>
