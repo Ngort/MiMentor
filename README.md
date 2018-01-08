@@ -1,4 +1,5 @@
 ## MiMentor Matching Algorithm
+### Nicolas A Gort Freitas
 
 This algorithm assigns a compatibility score between each mentee and
 mentor, sets a ranking of compatibility for each potential mentor and
